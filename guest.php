@@ -1,10 +1,9 @@
 <?php
 	session_start();
-  if($_SESSION["logged"]!="buyer")
-    header("location: index.php");
-	$name=$_SESSION['Name'];
-	echo "<title> Welcome $name </title>";
-	$db=mysqli_connect('localhost','root','','auction') or die("connection failed");
+  if($_SESSION["logged"]!="")
+  header("location: index.php");
+  	echo "<title> Welcome Guest </title>";
+  $db=mysqli_connect('localhost','root','','auction');
 ?>
 <html>
   <head>
@@ -14,7 +13,7 @@
         margin:4px;
       }
       body{
-      	margin:70px;
+      	margin: 70px;
         font-family:sans-serif;
         background-color: powderblue;
       }
@@ -46,7 +45,7 @@
     	width: 100%;
 	  }
 
-	li{	
+	li{
     	float: left;
 	}
 
@@ -65,72 +64,68 @@
    .active {
     background-color: #4CAF50;
  }
-  	</style>
-  </head>
-  <body>
-  	 	<ul>
-  			<li><a class="active" href="Listings.php">Search Products</a></li>
-  			<li><a href="addTender.php">Add Tender</a></li>
-  			<li><a href="userOrders.php">My Orders</a></li>
-        <li><a href="index.php">Logout</a><li>
-		</ul>
-  	<form method="POST" action="newOrder.php">
-      <table>
-        <tr>
-          <th>Product Name</th>
-          <th>Minimum Bid</th>
-          <th>Current Bid</th>
-          <th>Description</th>
-          <th>Stock</th>
-          <th>Seller</th>
-          <th>Time Left</th>
-         
-        </tr>
-        <?php
-        $query="SELECT * FROM product;";
-        mysqli_query($db,$query);
-        $result=mysqli_query($db,$query);
-        while($row=mysqli_fetch_array($result)){
-          echo '<tr>';
-          echo '<td>'.$row['productName'].'</td>';
-          echo '<td>'.$row['minbid'].'</td>';
+</style>
+</head>
+ <body>
+   <ul>
+     <li><a class="active" href="guest.php">Προϊόντα</a></li>
+     <li><a href="contactus.php">Επικοινωνία</a></li>
+     <li><a href="register.php">Register </a></li>
+     <li><a href="index.php">Επιστροφή στο αρχικό μενού</a><li>
+ </ul>
+ <table>
+ <tr>
+   <th>Product Name</th>
+   <th>Minimum Bid</th>
+   <th>Current Bid</th>
+   <th>Description</th>
+   <th>Stock</th>
+   <th>Seller</th>
+   <th>Time Left</th>
+ </tr>
+ <?php
+ $query="SELECT * FROM product;";
+ mysqli_query($db,$query);
+ $result=mysqli_query($db,$query);
+ while($row=mysqli_fetch_array($result)){
+   echo '<tr>';
+   echo '<td>'.$row['productName'].'</td>';
+   echo '<td>'.$row['minbid'].'</td>';
 
-          if($row['currBid']==0)
-          	echo '<td>NEW</td>';
-          else
-          	echo '<td>'.$row['currBid'].'</td>';
+   if($row['currBid']==0)
+     echo '<td>ΝΕΟ</td>';
+   else
+     echo '<td>'.$row['currBid'].'</td>';
 
-          echo '<td>'.$row['descp'].'</td>';
+   echo '<td>'.$row['descp'].'</td>';
 
-          if($row['quantity']>5)
-          	echo '<td>Available</td>';
-          else if($row['quantity']>0)
-          	echo '<td>Few Left</td>';
-          else
-          	echo '<td>Out of Stock</td>';
+   if($row['quantity']>5)
+     echo '<td>ΔΙΑΘΕΣΙΜΟ</td>';
+   else if($row['quantity']>0)
+     echo '<td>ΛΙΓΑ ΔΙΑΘΕΣΙΜΑ!ΠΡΟΛΑΒΕ ΤΟ!</td>';
+   else
+     echo '<td>ΕΞΑΝΤΛΗΘΗΚΕ</td>';
 
-          echo '<td>'.$row['sellerUsr'].'</td>';
+   echo '<td>'.$row['sellerUsr'].'</td>';
 
-          $d1=date_create($row['expiry']);
-          $d2=date_create(date('d-m-Y'));
+   $d1=date_create($row['expiry']);
+   $d2=date_create(date('d-m-Y'));
 
-          $diff=date_diff($d2,$d1);
+   $diff=date_diff($d2,$d1);
 
-		  if($diff->format("%R%a")<0){
-          	echo '<td>Expired<td>';
-          	$row['productId']=-1;
-          }
-          else if($diff->format("%R%a")==0)
-          	echo '<td>Last Day<td>';
-          else
-          	echo '<td>'.$diff->format("%a").' days left<td>';
-          $_SESSION['timeleft']=$diff->format("%a");
-          echo "<td> <button type='submit' name='NewBid' value=".$row['productId'].">Bid</button></td>";
-          echo '</tr>';
-        }
-        echo '</table>';
-        mysqli_close($db);
-        ?>
-      </form>
- </body>
-</html>	
+if($diff->format("%R%a")<0){
+     echo '<td>Expired<td>';
+     $row['productId']=-1;
+   }
+   else if($diff->format("%R%a")==0)
+     echo '<td>Last Day<td>';
+   else
+     echo '<td>'.$diff->format("%a").' days left<td>';
+   $_SESSION['timeleft']=$diff->format("%a");
+   echo '</tr>';
+ }
+ echo '</table>';
+ mysqli_close($db);
+ ?>
+</body>
+</html>

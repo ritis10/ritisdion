@@ -46,7 +46,7 @@
     	width: 100%;
 	  }
 
-	li{	
+	li{
     	float: left;
 	}
 
@@ -71,8 +71,8 @@
  		<ul>
   			<li><a  href="Seller_portal.php">Add Product</a></li>
   			<li><a class="active" href="Seller_orders.php">My Orders</a></li>
-       			<li><a href="MyProducts.php">My Products</a></li>
-        		<li><a href="index.php">Logout</a><li>
+       	<li><a href="MyProducts.php">My Products</a></li>
+        <li><a href="index.php">Logout</a><li>
 		</ul>
         <fieldset>
         <form method="post" action="Seller_orders.php">

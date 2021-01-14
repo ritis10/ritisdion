@@ -40,7 +40,7 @@
       width: 100%;
     }
 
-  li{ 
+  li{
       float: left;
   }
 
@@ -82,7 +82,28 @@
  				<label>Enter the Quantity Available</label> <input type="text" name="qty" value=""><br><br>
  				<label>Enter Item Description</label> <textarea rows='4' columns='10' name='desc' value=""></textarea><br>
  				<label>Enter the Expiry </label><input type="date" name="expiry" value=""></br>
- 				<button type="submit" name="submit" value=1> Add Product </button>
- 			</form>
-  	</body>
-</html>	
+				<input type="checkbox" name="extensions" value=0 id="myCheck" onchange="myfunction(this);">
+	  			<label for="extensions">Allow Extensions?</label><br>
+					<script>
+					document.getElementById("myCheck").onclick = function()
+					{
+						if (this.checked)
+						{
+							document.getElementById("extnum").disabled = false;
+							document.getElementById("dayext").disabled = false;
+						}
+						else
+						{
+							document.getElementById("extnum").disabled = true;
+							document.getElementById("extnum").value = 0;
+							document.getElementById("dayext").disabled = true;
+							document.getElementById("dayext").value = 0;
+						}
+					}
+					</script>
+					<label>Enter the Number of Extensions</label> <input type="number" name="extnum" id="extnum" value="" disabled><br>
+					<label>Enter the Time of Extensions (days)</label> <input type="number" name="dayext" id="dayext" value="" disabled><br>
+	 				<button type="submit" name="submit" value=1> Add Product </button>
+	 			</form>
+	  	</body>
+	</html>

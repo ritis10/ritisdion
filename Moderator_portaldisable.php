@@ -24,7 +24,7 @@
       tr,td,th{
         border-style:solid;
       }
-      input, button{
+      input{
         background: #2196F3;
         border: none;
         left: 0;
@@ -35,6 +35,17 @@
         transform: rotateZ(0deg);
         transition: all 0.1s ease-out;
       }
+			button{
+				background: #FF0006;
+				border: none;
+				left: 0;
+				color: black;
+				bottom: 0;
+				border: 0px solid rgba(0, 0, 0, 0.1);
+				border-radius:5px;
+				transform: rotateZ(0deg);
+				transition: all 0.1s ease-out;
+			}
       ul{
     	list-style-type: none;
    	 	margin: 0;
@@ -64,18 +75,17 @@
  .active {
 	background-color: #4CAF50;
 }
-
   </style>
   </head>
  	<body>
  	 <ul>
-        	<li><a class="active"  href="Moderator_portal.php">ActiveUsers</a></li>
-			    <li><a href="Moderator_portaldisable.php">DisableUsers</a></li>
+        	<li><a href="Moderator_portal.php">ActiveUsers</a></li>
+			    <li><a class="active"  href="Moderator_portaldisable.php">DisableUsers</a></li>
         	<li><a href="index.php">Logout</a><li>
 	 </ul>
 
       <fieldset>
- 		<form name='Users' method="POST" action="activememb.php" >
+ 		<form name='Users' method="POST" action="disablememb.php" >
         <table>
         <tr>
           <th>UserName</th>
@@ -108,8 +118,7 @@
           echo '<td>'.$row['email'].'</td>';
 					echo '<td>'.$row['approval_date'].'</td>';
 					echo '<td>'.$row['status'].'</td>';
-					echo "<td> <button type='submit' name='Activate' value=".$row['id'].">Activate</button></td>";
-          //echo "<td> <button type='submit' name='Disable' value=".$row['id'].">Disable</button></td>";
+          echo "<td> <button type='submit' name='Disable' value=".$row['id'].">Disable</button></td>";
           echo '</tr>';
         }
         echo '</table>';

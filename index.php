@@ -15,64 +15,78 @@
   </head>
   <body>
   	<center><h3>Καλως ήρθατε στο site xrisimos.gr για πλειστηριασμούς </h3><center>
-	<center><h4>Συμπληρώστε κατηγορία, username και password για Είσοδο </h4><center>
+	  <center><h4>Συμπληρώστε κατηγορία, username και password για Είσοδο </h4><center>
     <?php
       if($_SERVER["REQUEST_METHOD"]=="POST")
       {
-         $usr=$_POST['usr'];
+        $usr=$_POST['usr'];
         $pass=$_POST['passwd'];
         if(isset($_POST['category']))
         	$cat=$_POST['category'];
 
-        $query="select username from users where username='$usr' and pass='$pass' and role='$cat';";
-        $result=mysqli_query($db,$query) or die("Δεν φορτώθηκαν το ονοματα");
+        $query="select username from users where username='$usr' and pass='$pass' and role='$cat'and status='active';";
+        $result=mysqli_query($db,$query) or die("Η σύνδεση απέτυχε");
         $count=mysqli_num_rows($result);
 		if($count!=1)
-        {
-          $error="Λάθος Username \n ή password \n ή category";
-        }
-        else
-        {
-           $_SESSION["logged"]=$cat;;
+    {
+          $error="Λάθος Username \n ή password \n ή category ή ο λογ/σμος δεν είναι ενεργοποιημένος";
+          $query="select username from users where username='$usr' and pass='$pass' and role='$cat'and status='temporarily disabled'or'finally disabled';";
+          $result=mysqli_query($db,$query) or die("Η σύνδεση απέτυχε");
+          $count=mysqli_num_rows($result);
+          if($count==1){
+            echo '<tr>';
+            echo '<td>' ."Ο λογαριασμός σας έχει απενεργοποιηθεί".'</td>';
+            echo '<td>' ."\t Επικοινωνήστε με το διαχ/στη του συστήματος για ενεργοποίηση".'</td>';
+            echo '</tr>';
+          }
+    }
+    else
+    {
+          $_SESSION["logged"]=$cat;;
           $_SESSION["Name"]=$usr;
-              if($cat=="buyer")
+          if($cat=="buyer")
           	header("location: Listings.php");
-              else if($cat=="seller")
+          else if($cat=="seller")
           	header("location: Seller_portal.php");
-              else if($cat=="svp")
+          else if($cat=="svp")
           	header("location: svp.php");
-	      else if($cat=="Moderator")
+	        else if($cat=="Moderator")
           	header("location: Moderator_portal.php");
-              else
+          else
           	header("location: guest.php");
-        }
+      }
+
       }
      ?>
 
     <center>
     <form id="login" method="post" action="">
-      <p class="title">Log in</p>
+    <p class="title">Log in</p>
 
-    <input type="text" placeholder="Username" id='usr' name='usr' autofocus required/>
+    <input type="text" placeholder="Username" id='usr' name='usr'  required/>
     <input type="password" placeholder="Password" id='passwd' name='passwd' required/>
 
 	  <input type="radio" name='category' value="buyer">(Buyer)Eνδιαφερόμενος
     <input type="radio" name='category' value="seller">(Seller)Δημοπράτης
     <input type="radio" name='category' value="svp">(Service Provider)Πάροχος
 	  <input type="radio" name='category' value="Moderator">Διαμεσολαβητής
-	  <input type="radio" name='category' value="guest">Επισκέπτης
-      <?php
+
+    <?php
         if(isset($error) && !empty($error))
         {
           echo "<p id='error'> $error </p>";
         }
         mysqli_close($db);
-       ?>
-      <button type="submit" id='lgin'>
-        Log In
-      </button>
+    ?>
+    <button type="submit" id='lgin'>
+      Log In
+    </button>
+    <p>
+       Not a member? <a href="registration.php">Sign up</a>
+   </p>
     </form>
-  </center>
-
-  </body>
-</html>
+    </center>
+   </body>
+   <a href="guest.php">Για είσοδο σαν επισκεπτης
+   <a href="contactus.php">Για επικοινωνία
+   </html>

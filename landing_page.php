@@ -4,17 +4,29 @@
 	$Err=0;
 	$idee=$_POST['submit'];
 	$db=mysqli_connect('localhost','root','','auction') or die('connection failed');
-	
-	if ($idee==1){
+	mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+	if ($idee==1)
+	{
 	$pname=$descp='';
-	$minbid=$maxbid=$Qty=$Exp=0;
+	$extensions=$minbid=$maxbid=$Qty=$Exp=$extnum=$dayext=0;
 	$descp=$_POST['desc'];
 	if ($_POST['name']!="")
 		$pname=$_POST['name'];
 	else{
 		echo "Please Enter Product Name<br>";
 		$Err++;
-	} 
+	}
+	if ($_POST['extnum']>0)
+			$extnum=$_POST['extnum'];
+		else{
+			$extnum = 0;
+		}
+
+		if ($_POST['dayext']>0)
+			$dayext=$_POST['dayext'];
+		else{
+			$dayext = 0;
+		}
 
 	if ($_POST['minbid']!=""){
 		if (is_numeric($_POST['minbid']))
@@ -28,6 +40,14 @@
 		echo "Please Enter Minimum Bid<br>";
 		$Err++;
 	}
+	if (isset($_POST['extensions']))
+		{
+			$extensions = 1;
+		}
+		else
+		{
+			$extensions = 0;
+		}
 
 	$d1=date_create($_POST['expiry']);
 	$d2=date_create(date('d-m-Y'));
@@ -78,7 +98,8 @@
 		$max=mysqli_fetch_array($max);
 		$max=$max['lastId']+1;
 
-		$query="INSERT into product VALUES($max,'$pname',$maxbid,$minbid,$Qty,'$name','$descp','0','$Exp');";
+
+		$query="INSERT into product VALUES($max,'$pname',$maxbid,$minbid,$Qty,'$name','$descp','0','$Exp', '$extensions', '$extnum' ,'$dayext');";
 		$result=mysqli_query($db,$query) or die("could not add");
 		if($result){
 			echo "<title> Successfully Added Product</title>";
@@ -168,7 +189,7 @@
 		}
 		echo "<form action='Listings.php'><button action='Listings.php'>Go Back</button></form>";
 	}
-	
+
 	if($idee==5){
 		$PID=$_SESSION['Product_to_delete'];
 		$query="DELETE from product where productId=$PID;";
@@ -212,32 +233,66 @@
 
 	}
 	if ($idee==7){
-		$PID=$_SESSION["member_to_active"];
-		$Stat=$_SESSION["member_status"];
-		$OID=$_SESSION["member_to_active"];
-		if ($Stat=='Active'){
+		//$PID=$_SESSION["user_to_active"];
+		$Stat=$_SESSION["user_status"];
+		$OID=$_SESSION["user_to_active"];
+		if ($Stat=='active'){
 			echo "Member is already activated<br>";
 			echo "<title> Please Try Again !</title>";
 		}
 		else {
-			$query="SELECT amount,quantity from orders where OrderId=$OID";
-			$result=mysqli_query($db,$query) or die('No fetch Data');
-			while($row=mysqli_fetch_array($result)){
-				$qty=$row['quantity'];
-				$amt=$row['amount'];
-			}
-
-			$query="UPDATE orders set status='active' where OrderId=$OID";
-			$result=mysqli_query($db,$query) or die('Could not sell');
-
-			$query="UPDATE product set minbid=maxbid, maxbid=maxbid+$amt, currBid=0 where productId=$PID;";
-			$result2=mysqli_query($db,$query) or die('Could not Update');
-			if($result2 && $result){
+			$query="UPDATE users set status='active' where id=$OID";
+			$result=mysqli_query($db,$query) or die('Could not change');
+			$query1="UPDATE users set approval_date=curdate() where id=$OID";
+			$result1=mysqli_query($db,$query1) or die('λαθος ημερομηνία');
+		  if($result){
 				echo "<title> Success !</title>";
-				echo "Successfully Sold and Updated";
-			}
-			}
-				echo "<form action='Seller_orders.php'><button action='Seller_orders.php'>Go Back</button></form>";
+				echo "Ο λογαριασμός χρήστη με κωδικό : $OID ενεργοποιήθηκε επιτυχώς";
+		  }
+		}
+				echo "<form action='Moderator_portal.php'><button action='Moderator_portal.php'>Go Back</button></form>";
+
+	}
+	if ($idee==8){
+		//$PID=$_SESSION["user_to_active"];
+		$Stat=$_SESSION["user_status"];
+		$OID=$_SESSION["user_to_disable"];
+		if ($Stat=='temporarily disable'){
+			echo "Member is already disabled<br>";
+			echo "<title> Please Try Again !</title>";
+		}
+		else {
+			$query="UPDATE users set status='temporarily disabled' where id=$OID";
+			$result=mysqli_query($db,$query) or die('Could not change');
+			$query1="UPDATE users set approval_date=curdate() where id=$OID";
+			$result1=mysqli_query($db,$query1) or die('λαθος ημερομηνία');
+		  if($result){
+				echo "<title> Success !</title>";
+				echo "Ο λογαριασμός χρήστη με κωδικό : $OID απεργοποιήθηκε προσωρινά";
+		  }
+		}
+				echo "<form action='Moderator_portal.php'><button action='Moderator_portal.php'>Go Back</button></form>";
+
+	}
+	if ($idee==9){
+		//$PID=$_SESSION["user_to_active"];
+		$Stat=$_SESSION["user_status"];
+		$OID=$_SESSION["user_to_disable"];
+		if ($Stat=='finally disable'){
+			echo "Member is already finally disabled<br>";
+			echo "<title> Please Try Again !</title>";
+		}
+		else {
+			$query="UPDATE users set status='finally disabled' where id=$OID";
+			$result=mysqli_query($db,$query) or die('Could not change');
+			$query1="UPDATE users set approval_date=curdate() where id=$OID";
+			$result1=mysqli_query($db,$query1) or die('λαθος ημερομηνία');
+		  if($result){
+				echo "<title> Success !</title>";
+				echo "Ο λογαριασμός χρήστη με κωδικό : $OID απεργοποιήθηκε οριστικά";
+		  }
+		}
+				echo "<form action='Moderator_portal.php'><button action='Moderator_portal.php'>Go Back</button></form>";
 
 	}
 	?>

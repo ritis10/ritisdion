@@ -3,10 +3,10 @@
 	if($_SESSION["logged"]!="Moderator")
 	header("location: index.php");
 	$name=$_SESSION['Name'];
-	echo "<title> User Activation </title>";
+	echo "<title> User Disable </title>";
 	$db=mysqli_connect('localhost','root','','auction') or die("connection failed");
-  $oid=$_POST['Activate'];
-  $_SESSION['member_to_active']=$oid;
+  $oid=$_POST['Disable'];
+  $_SESSION['member_to_disable']=$oid;
 ?>
 <html>
   <head>
@@ -37,11 +37,30 @@
         transform: rotateZ(0deg);
         transition: all 0.1s ease-out;
       }
+			button{
+	      background: #FF0006;
+	      border: none;
+	      left: 0;
+	      color: black;
+	      bottom: 0;
+	      border: 0px solid rgba(0, 0, 0, 0.1);
+	      border-radius:5px;
+	      transform: rotateZ(0deg);
+	      transition: all 0.1s ease-out;;
+        border: none;
+        left: 0;
+        color: black;
+        bottom: 0;
+        border: 0px solid rgba(0, 0, 0, 0.1);
+        border-radius:5px;
+        transform: rotateZ(0deg);
+        transition: all 0.1s ease-out;
+			}
       ul{
     	list-style-type: none;
    	 	margin: 0;
-  	  	padding: 0;
-    	overflow: hidden;
+  	  padding: 0;
+    	overflow: adjust;
     	background-color: #333;
     	position: fixed;
     	top: 0;
@@ -71,25 +90,25 @@
   </head>
   <body>
   	<ul>
-        <li><a class="active"  href="Moderator_portal.php">ActiveUsers</a></li>
-		    <li><a href="Moderator_portaldisable.php">DisableUsers</a></li>
+        <li><a href="Moderator_portal.php">ActiveUsers</a></li>
+		    <li><a class="active"  href="Moderator_portaldisable.php">DisableUsers</a></li>
         <li><a href="index.php">Logout</a><li>
     </ul>
   	<form method="POST" action="landing_page.php">
-     <center> <h3> Ενεργοποίηση Χρήστη </h3><center>
+     <center> <h3> Προσωρινή απενεργοποίηση Χρήστη </h3><center>
 			 <table>
          <tr>
-					 <th>UserName</th>
-					 <th>id</th>
-					 <th>pass</th>
-					 <th>first_name</th>
+           <th>status</th>
+           <th>approval_date</th>
+           <th>username</th>
+           <th>id</th>
+           <th>pass</th>
+           <th>first_name</th>
 					 <th>last_name</th>
-					 <th>role</th>
-					 <th>dateofbirth</th>
-					 <th>address</th>
-					 <th>email</th>
-					 <th>Approval Date</th>
-					 <th>Status</th>
+           <th>role</th>
+           <th>dob</th>
+           <th>address</th>
+           <th>email</th>
 
          </tr>
          <?php
@@ -98,6 +117,9 @@
          $result=mysqli_query($db,$query);
          while($row=mysqli_fetch_array($result)){
            echo '<tr>';
+           echo '<td>'.$row['status'].'</td>';
+           //echo '<td>'.$row['approval_pom'].'</td>';
+           echo '<td>'.$row['approval_date'].'</td>';
            echo '<td>'.$row['username'].'</td>';
            echo '<td>'.$row['id'].'</td>';
            echo '<td>'.$row['pass'].'</td>';
@@ -107,15 +129,14 @@
            echo '<td>'.$row['dob'].'</td>';
            echo '<td>'.$row['address'].'</td>';
            echo '<td>'.$row['email'].'</td>';
-					 echo '<td>'.$row['approval_date'].'</td>';
-					 echo '<td>'.$row['status'].'</td>';
            echo '</tr>';
            $_SESSION["user_status"]=$row['status'];
-           $_SESSION["user_to_active"]=$row['id'];
+           $_SESSION["user_to_disable"]=$row['id'];
          }
          echo '</table>';
          mysqli_close($db);
          ?>
-        <button type='submit' name='submit' value='7'>Active</button>
+        <button type='submit' name='submit' value='8'>Temporarily Disabled</button>
+				<button type='submit' name='submit' value='9'>Finally Disabled</button>
  </body>
 </html>

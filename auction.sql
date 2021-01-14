@@ -1,14 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 4.7.0
+-- version 5.0.4
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Oct 30, 2017 at 06:56 PM
--- Server version: 10.1.26-MariaDB
--- PHP Version: 7.1.8
+-- Φιλοξενητής: 127.0.0.1
+-- Χρόνος δημιουργίας: 12 Ιαν 2021 στις 17:17:01
+-- Έκδοση διακομιστή: 10.4.17-MariaDB
+-- Έκδοση PHP: 8.0.0
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -19,13 +18,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `auction`
+-- Βάση δεδομένων: `auction`
 --
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `orders`
+-- Δομή πίνακα για τον πίνακα `orders`
 --
 
 CREATE TABLE `orders` (
@@ -36,26 +35,24 @@ CREATE TABLE `orders` (
   `Address` varchar(100) NOT NULL,
   `productId` int(11) NOT NULL,
   `Quantity` int(11) NOT NULL,
-  `status` int(11) NOT NULL DEFAULT '0'
+  `status` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `orders`
+-- Άδειασμα δεδομένων του πίνακα `orders`
 --
 
 INSERT INTO `orders` (`OrderId`, `BuyerUsr`, `SellerUsr`, `Amount`, `Address`, `productId`, `Quantity`, `status`) VALUES
-(1, 'Tanay', 'Udai', 70, 'Parbatia Main Road, Balugada Turning, Near Esi Dispensary', 6, 3, 1),
-(2, 'Tanay', 'Udai', 700, 'Parbatia Main Road, Balugada Turning, Near Esi Dispensary', 3, 2, 1),
-(3, 'Tanay', 'Rahul', 175001, 'Parbatia Main Road, Balugada Turning, Near Esi Dispensary', 7, 1, 0),
-(4, 'Tanay', 'Rahul', 2500, 'Parbatia Main Road, Balugada Turning, Near Esi Dispensary', 9, 1, 0),
-(5, 'Ankit', 'Rahul', 3500, 'vit bOYS hOSTEL', 9, 1, 1),
-(6, 'Ankit', 'Udai', 1500, 'abc', 3, 3, 0),
-(7, 'Tanay', 'Udai', 1700, 'Kings Palace', 3, 2, 1);
+(1, 'bill', 'danis', 810, 'Komninon 44,Serres', 1, 3, 1),
+(2, 'bill', 'danis', 940, 'Komninon 44,Serres', 3, 2, 1),
+(3, 'bill', 'danis', 1020, 'Komninon 44,Serres', 4, 1, 1),
+(4, 'bill', 'danis', 930, 'komninon 44,serres', 3, 5, 1),
+(5, 'bill', 'danis', 820, 'komninon 44,serres', 1, 20, 1);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `product`
+-- Δομή πίνακα για τον πίνακα `product`
 --
 
 CREATE TABLE `product` (
@@ -71,68 +68,69 @@ CREATE TABLE `product` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `product`
+-- Άδειασμα δεδομένων του πίνακα `product`
 --
 
 INSERT INTO `product` (`productId`, `productName`, `maxbid`, `minbid`, `quantity`, `sellerUsr`, `descp`, `currBid`, `expiry`) VALUES
-(1, 'Regal Imported Soap', 750, 500, 20, 'Udai', 'Premium Soap imported from USA. Each Box contains 2 bricks.', 0, '2017-10-28'),
-(3, 'Scented Candles', 3800, 2100, 34, 'Udai', 'Set of 10 scented candles. Scented rose', 0, '2018-12-31'),
-(4, 'Apple Wireless Keyboard ', 13000, 8000, 4, 'Rahul', 'Imported Apple Wireless Keyboard with touch bar', 0, '2017-10-31'),
-(6, 'Super Slime', 310, 120, 6, 'Udai', 'Super Slime with infinite life', 0, '2017-10-30'),
-(7, 'Dell XPS 13 2017', 230000, 175000, 3, 'Rahul', 'Latest version of the XPS 13 Series. Imported from USA', 175001, '2017-12-27'),
-(8, 'Death Note Notebook', 600, 350, 7, 'Rahul', 'Official Death Note Merchandise. Has 120 Pages.', 0, '2017-11-17'),
-(9, 'Magnet Perfume', 13500, 10000, 3, 'Rahul', 'Synthetic perfume imported form France', 0, '2017-11-04'),
-(10, 'Tanishq Gold Watch', 200000, 75000, 1, 'Rahul', '22K gold watch with hall mark. ', 0, '2017-12-31');
+(1, 'Apple iPhone 11 (64GB) Black', 2530, 1670, 78, 'danis', 'https://www.skroutz.gr/s/20060269/Apple-iPhone-11-64GB-Black.html#specs', 0, '2021-04-01'),
+(2, 'Apple iPhone 11 Pro (64GB) Spa', 1200, 920, 150, 'danis', 'https://www.skroutz.gr/s/23117232/Apple-iPhone-11-Pro-64GB-Space-Gray.html', 0, '2021-12-31'),
+(3, 'Apple iPhone SE 2020 (64GB) Bl', 1930, 1000, 120, 'danis', 'https://www.skroutz.gr/s/22815459/Apple-iPhone-SE-2020-64GB-Black.html', 0, '2021-05-12'),
+(4, 'Apple iPhone 12 Mini (64GB) Bl', 2520, 1500, 200, 'danis', 'https://www.skroutz.gr/s/25223353/Apple-iPhone-12-Mini-64GB-Black.html', 0, '2021-01-30'),
+(5, 'Xiaomi Poco F2 Pro (128GB) Cyb', 1580, 1110, 46, 'danis', 'https://www.skroutz.gr/s/23316298/Xiaomi-Poco-F2-Pro-128GB-Cyber-Gray.html?from=catspan', 0, '2021-02-08');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `users`
+-- Δομή πίνακα για τον πίνακα `users`
 --
 
 CREATE TABLE `users` (
-  `username` varchar(15) NOT NULL,
-  `pass` varchar(15) DEFAULT NULL,
-  `first_name` varchar(10) DEFAULT NULL,
-  `last_name` varchar(10) DEFAULT NULL,
-  `dob` varchar(8) DEFAULT NULL,
-  `role` varchar(10) DEFAULT NULL,
-  `email` varchar(30) DEFAULT NULL
+  `status` varchar(10) CHARACTER SET utf8 DEFAULT NULL,
+  `approval_date` date DEFAULT NULL,
+  `username` varchar(15) DEFAULT NULL,
+  `id` int(5) NOT NULL,
+  `pass` varchar(15) CHARACTER SET utf8 DEFAULT NULL,
+  `first_name` varchar(12) CHARACTER SET utf8 DEFAULT NULL,
+  `last_name` varchar(15) CHARACTER SET utf8 DEFAULT NULL,
+  `role` varchar(15) CHARACTER SET utf8 DEFAULT NULL,
+  `dob` varchar(8) CHARACTER SET utf8 DEFAULT NULL,
+  `address` varchar(30) CHARACTER SET utf8 DEFAULT NULL,
+  `email` varchar(30) CHARACTER SET utf8 DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `users`
+-- Άδειασμα δεδομένων του πίνακα `users`
 --
 
-INSERT INTO `users` (`username`, `pass`, `first_name`, `last_name`, `dob`, `role`, `email`) VALUES
-('Ankit', '5', 'Ankit', 'Jain', '27/12/98', 'buyer', 'ankitjain@gmail.com'),
-('Rahul', '4', 'Rahul', 'Kelkar', '29/02/98', 'seller', 'rahulanoop@gmail.com'),
-('Sparsh', '3', 'Sparsh', 'Agarwal', '27/11/97', 'svp', 'sparshagarwal100@gmail.com'),
-('Tanay', '1', 'Tanay', 'Agarwal', '26/12/97', 'buyer', 'tanay1up@gmail.com'),
-('Udai', '2', 'udai', 'Agarwal', '07/01/97', 'seller', 'udaiag@gmail.com');
+INSERT INTO `users` (`status`, `approval_date`, `username`, `id`, `pass`, `first_name`, `last_name`, `role`, `dob`, `address`, `email`) VALUES
+('active', '2021-01-02', 'bill', 10001, '3', 'Βασίλης', 'Γεωργιάδης', 'Buyer', '17/5/93', 'Κομνηνών 44, Σέρρες', 'bilgeorgiadis@gmail.com'),
+('active', '2021-01-03', 'danis', 10002, '4', 'Ιορδάνης', 'Κεσούλης', 'Seller', '15/8/93', 'Κανάκη 3,Σέρρες', 'iordanis@gmail.com'),
+('active', '2021-01-12', 'dion', 10003, '5', 'Dionisis', 'Fanariotis', 'svp', '14/8/92', 'Κων/πολεως 12,Περιστέρι', 'dionfan10@gmail.com'),
+('active', '2021-01-12', 'Gio', 10004, '2', 'Giorgos', 'Ntertzis', 'Moderator', '29/02/90', 'Αρκαδίας 23,Καισαριανή', 'gntertzis@gmail.com'),
+('active', '2021-01-12', 'ritis', 10005, '1', 'Margaritis', 'Tsirikas', 'Moderator', '23/4/94', 'Κομνηνών 30,Σέρρες', 'tsirikasm@gmail.com');
 
 --
--- Indexes for dumped tables
+-- Ευρετήρια για άχρηστους πίνακες
 --
 
 --
--- Indexes for table `orders`
+-- Ευρετήρια για πίνακα `orders`
 --
 ALTER TABLE `orders`
   ADD PRIMARY KEY (`OrderId`);
 
 --
--- Indexes for table `product`
+-- Ευρετήρια για πίνακα `product`
 --
 ALTER TABLE `product`
   ADD PRIMARY KEY (`productId`),
   ADD UNIQUE KEY `productId` (`productId`);
 
 --
--- Indexes for table `users`
+-- Ευρετήρια για πίνακα `users`
 --
 ALTER TABLE `users`
-  ADD PRIMARY KEY (`username`),
+  ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `email` (`email`);
 COMMIT;
 
