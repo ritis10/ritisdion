@@ -2,13 +2,49 @@
 <!DOCTYPE html>
 <html>
 <head>
+<style>
+ul{
+list-style-type: none;
+margin: 0;
+  padding: 0;
+overflow: hidden;
+background-color: #333;
+position: fixed;
+top: 0;
+width: 100%;
+}
+li{
+    float: left;
+}
+
+  li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+ li a:hover:not(.active) {
+  background-color: #111;
+}
+.active {
+ background-color: #4CAF50;
+}
+</style>
   <title>ΕΓΓΡΑΦΗ ΧΡΗΣΤΗ</title>
   <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
+  <ul>
+      <li><a href="guest.php">Προϊόντα</a></li>
+      <li><a href="contactus.php">Επικοινωνία</a></li>
+      <li><a class="active" href="registration.php">Register </a></li>
+      <li><a href="index.php">Επιστροφή στο αρχικό μενού</a><li>
+  </ul>
   <center>
   <form id = "register" method="post" action="registration.php">
-    <p class="title">ΕΓΓΡΑΦΗ ΧΡΗΣΤΗ</p>
+    <p class="title"><b>ΕΓΓΡΑΦΗ ΧΡΗΣΤΗ</b></p>
   	<?php include('errors.php'); ?>
   	<div class="input-group">
   	  <label>Όνομα Χρήστη</label>
@@ -43,16 +79,23 @@
       <input type="date" name="date" value="<?php echo $date; ?>">
     </div>
     <div class="input-group">
-        <label>Επιλέξτε Κατηγορία</label>
-      <input type="radio" name='category' value="buyer">Eνδιαφερόμενος (Buyer)
-      <input type="radio" name='category' value="seller">Δημοπράτης (Seller)
+        <label><b><u>Επιλέξτε Κατηγορία user</u></b></label>
+    <p>
+        Eνδιαφερόμενος (Buyer) <input type="radio" name='category' value="buyer">
+    </p>
+    <p>
+        Δημοπράτης (Seller)  <input type="radio" name='category' value="seller">
+    </p>
     </div>
   	<div class="input-group">
   	  <button type="submit" class="btn" name="reg_user" id = "reg">Εγγραφή</button>
   	</div>
-  	<p>
-  		Already a member? <a href="index.php">Sign in</a>
-  	</p>
+  	<p><i>
+  	 	 Είσαστε ήδη εγγεγραμμένος;
+  	</i></p>
+    <p>
+       <a href="index.php">Είσοδος σαν μέλος</a>
+    </p>
   </form>
   </center>
 </body>

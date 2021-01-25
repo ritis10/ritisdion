@@ -1,6 +1,6 @@
 <?php
 	session_start();
-  if($_SESSION["logged"]!="0")
+  if($_SESSION["logged"]!="1")
 	//if($_SESSION["logged"]!="Moderator")
 	header("location: indexm.php");
 	$name=$_SESSION['Name'];
@@ -72,9 +72,11 @@
   </head>
   <body>
   	<ul>
-        <li><a class="active"  href="Moderator_portal.php">ActiveUsers</a></li>
-		    <li><a href="Moderator_portaldisable.php">DisableUsers</a></li>
-				<li><a href="mod_Products.php">Auctions</a></li>
+        <li><a class="active"  href="svp.php">ActiveUsers</a></li>
+		    <li><a href="svp_portaldisable.php">DisableUsers</a></li>
+				<li><a href="svp_Seller_portal.php">Knockdown</a></li>
+	 		  <li><a href="svp_Seller_orders.php">Orders</a></li>
+	 		  <li><a href="svp_Products.php">Products</a></li>
         <li><a href="index.php">Logout</a><li>
     </ul>
   	<form method="POST" action="landing_page.php">
@@ -82,36 +84,35 @@
 			 <table>
          <tr>
 					 <th>UserName</th>
-           <th>id</th>
-           <th>pass</th>
-           <th>first_name</th>
-           <th>last_name</th>
-           <th>role</th>
-           <th>dateofbirth</th>
- 		       <th>address</th>
-           <th>email</th>
- 					 <th>Approval Date</th>
- 					 <th>Approval Pom</th>
- 					 <th>Status</th>
+					 <th>id</th>
+					 <th>pass</th>
+					 <th>first_name</th>
+					 <th>last_name</th>
+					 <th>role</th>
+					 <th>dateofbirth</th>
+					 <th>address</th>
+					 <th>email</th>
+					 <th>Approval Date</th>
+					 <th>Status</th>
+
          </tr>
          <?php
          $query="SELECT * FROM users inner JOIN user_status on status=u_status_id where id=$oid;";
          mysqli_query($db,$query);
          $result=mysqli_query($db,$query);
          while($row=mysqli_fetch_array($result)){
-					 echo '<tr>';
+           echo '<tr>';
            echo '<td>'.$row['username'].'</td>';
            echo '<td>'.$row['id'].'</td>';
            echo '<td>'.$row['pass'].'</td>';
-           echo '<td>'.$row['first_name'].'</td>';
+					 echo '<td>'.$row['first_name'].'</td>';
            echo '<td>'.$row['last_name'].'</td>';
            echo '<td>'.$row['role'].'</td>';
- 		       echo '<td>'.$row['dob'].'</td>';
+           echo '<td>'.$row['dob'].'</td>';
            echo '<td>'.$row['address'].'</td>';
            echo '<td>'.$row['email'].'</td>';
- 					 echo '<td>'.$row['approval_date'].'</td>';
- 					 echo '<td>'.$row['approval_pom'].'</td>';
- 					 echo '<td>'.$row['u_status_descr'].'</td>';
+					 echo '<td>'.$row['approval_date'].'</td>';
+					 echo '<td>'.$row['u_status_descr'].'</td>';
            echo '</tr>';
            $_SESSION["user_status"]=$row['status'];
            $_SESSION["user_to_active"]=$row['id'];
@@ -119,6 +120,6 @@
          echo '</table>';
          mysqli_close($db);
          ?>
-        <button type='submit' name='submit' value='7'>Active</button>
+        <button type='submit' name='submit' value='10'>Active</button>
  </body>
 </html>

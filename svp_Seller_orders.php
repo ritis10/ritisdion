@@ -1,7 +1,7 @@
 <?php
 	session_start();
-    if($_SESSION["logged"]!="seller")
-    header("location: index.php");
+    if($_SESSION["logged"]!="1")
+    header("location: indexm.php");
 	$name=$_SESSION['Name'];
 	echo "<title> Welcome $name </title>";
   $db=mysqli_connect('localhost','root','','auction');
@@ -69,10 +69,12 @@
   </head>
  	<body>
  		<ul>
-  			<li><a  href="Seller_portal.php">Add Product</a></li>
-  			<li><a class="active" href="Seller_orders.php">My Orders</a></li>
-       	<li><a href="MyProducts.php">My Products</a></li>
-        <li><a href="index.php">Logout</a><li>
+			<li><a href="svp.php">ActiveUsers</a></li>
+			<li><a href="svp_portaldisable.php">DisableUsers</a></li>
+			<li><a href="svp_Seller_portal.php">Knockdown</a></li>
+			<li><a class="active"  href="svp_Seller_orders.php">Orders</a></li>
+			<li><a href="svp_Products.php">Products</a></li>
+			<li><a href="index.php">Logout</a><li>
 		</ul>
         <fieldset>
         <form method="post" action="Seller_orders.php">
@@ -88,14 +90,15 @@
  			<form name='myorders' method="POST" action="Finalize.php" >
         <table>
         <tr>
-					<th>Κωδικός Παραγγελίας</th>
-          <th>Προϊόν</th>
-          <th>Πωλητής</th>
-          <th>Τωρινή Προσφορά</th>
-					<th>Πελάτης</th>
-					<th>Χρόνος παραγγελίας</th>
-          <th>Διεύθυνση Πελάτη</th>
-          <th>Κατάσταση Παραγγελίας</th>
+          <th>OrderId</th>
+					<th>Προϊόν</th>
+          <th>Όνομα Αγοραστή</th>
+          <th>Όνομα Πωλητή</th>
+          <th>Ποσό τωρινής προσφοράς</th>
+
+          <th>Δθνση Αγοραστή</th>
+          <th>Address</th>
+          <th>Status</th>
         </tr>
         <?php
         $filter="";
@@ -120,13 +123,12 @@
         while($row=mysqli_fetch_array($result)){
           echo '<tr>';
           echo '<td>'.$row['OrderId'].'</td>';
-					echo '<td>'.$row['productName'].'</td>';
-          echo '<td>'.$row['SellerUsr'].'</td>';
+          echo '<td>'.$row['auctionId'].'</td>';
+          echo '<td>'.$row['BuyerUsr'].'</td>';
           echo '<td>'.$row['Amount'].'</td>';
-					echo '<td>'.$row['first_name'].' '.$row['last_name'].'</td>';
-					echo '<td>'.$row['when_'].'</td>';
-					echo '<td>'.$row['Address'].'</td>';
-          if ($row['status_del']==0)
+          echo '<td>'.$row['Quantity'].'</td>';
+          echo '<td>'.$row['Address'].'</td>';
+          if ($row['status']==0)
             echo '<td> Not Sold </td>';
           else
             echo '<td> Sold </td>';

@@ -46,7 +46,7 @@
     	width: 100%;
 	  }
 
-	li{	
+	li{
     	float: left;
 	}
 
@@ -76,55 +76,153 @@
   	<form method="POST" action="newOrder.php">
       <table>
         <tr>
-          <th>Product Name</th>
-          <th>Minimum Bid</th>
-          <th>Current Bid</th>
-          <th>Description</th>
-          <th>Stock</th>
-          <th>Seller</th>
-          <th>Time Left</th>
-         
-        </tr>
+          <th>Όνομα Προϊόντος ή Υπηρεσίας</th>
+          <th>Τιμή Εκκίνησης</th>
+          <th>Τωρινή Τιμή</th>
+					<th>Τιμή Επόμενου Χτυπήματος</th>
+          <th>Λεπτομέρειες</th>
+          <th>Τύπος Δημοπρασίας</th>
+          <th>Πωλητής</th>
+          <th>Επιτρέπονται οι Παρατασεις</th>
+		  		<th>Ώρα που απομένει</th>
+		  		<th>Αριθμός επιτρεπόμενων επεκτάσεων</th>
+          <th>Χρόνος μιας επέκτασης</th>
+		  		<th>crucial time</th>
+					</tr>
+
+
         <?php
-        $query="SELECT * FROM product;";
+				$query="SELECT * FROM product inner Join auction_types on a_type_id=type
+																			inner Join users on owner=id;";
         mysqli_query($db,$query);
         $result=mysqli_query($db,$query);
+
         while($row=mysqli_fetch_array($result)){
           echo '<tr>';
           echo '<td>'.$row['productName'].'</td>';
-          echo '<td>'.$row['minbid'].'</td>';
+          echo '<td>'.$row['minbid'].'€</td>';
 
           if($row['currBid']==0)
-          	echo '<td>ΝΕΟ</td>';
+          	echo '<td>'.$row['minbid'].'€</td>';
           else
-          	echo '<td>'.$row['currBid'].'</td>';
+          	echo '<td>'.$row['currBid'].'€</td>';
+
+					echo '<td>'.$row['price_step'].'€</td>';
 
           echo '<td>'.$row['descp'].'</td>';
 
-          if($row['quantity']>5)
-          	echo '<td>ΔΙΑΘΕΣΙΜΟ</td>';
-          else if($row['quantity']>0)
-          	echo '<td>ΛΙΓΑ ΔΙΑΘΕΣΙΜΑ!ΠΡΟΛΑΒΕ ΤΟ!</td>';
+					echo '<td>'.$row['a_type_descr'].'</td>';
+
+          /*if($row['type']==0)
+          	echo '<td>ΠΛΕΙΟΔΟΤΙΚΗ</td>';
           else
-          	echo '<td>ΕΞΑΝΤΛΗΘΗΚΕ</td>';
+          	echo '<td>ΜΕΙΟΔΟΤΙΚΗ</td>';*/
 
-          echo '<td>'.$row['sellerUsr'].'</td>';
+          echo '<td>'.$row['first_name']. ' ' .$row['last_name'].'</td>';
 
-          $d1=date_create($row['expiry']);
-          $d2=date_create(date('d-m-Y'));
+					if($row['extensions']==1)
+						echo '<td>NAI</td>';
+					else
+						echo '<td>OXI</td>';
 
-          $diff=date_diff($d2,$d1);
+						$d1=date_create($row['expiry']);
+						$d1->modify("+5 hours");
+						$d2=date_create(date("Y-m-d H:i:s"));
+						//$d2=strtotime($d2);
+						$diff=date_diff($d2,$d1);
+						if($diff->format("%R%a")<0)
+						{
+										echo '<td>Expired</td>';
+										$isSaveDisabled = true;
+						}
+						elseif($d1<$d2)
+						{
+								if($row['extensions']==1)
+								{
+												$last="SELECT currBid as \"lastBid\" from product WHERE currBid > (NOW() - INTERVAL 30 MINUTE)";
+												$last=mysqli_query($db,$last) or die("query failed");
+												$last=mysqli_fetch_array($last);
+												if($last == true)
+												{
+														$d1->modify("+15 minutes");
+														mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+														$update="UPDATE product SET Num_of_Extensions = Num_of_Extensions-1";
+														$result=mysqli_query($db,$update) or die('Could not update');
+												}
+								}
+								else{
+										echo '<td>Expired</td>';
+										$isSaveDisabled = true;
+								}
+						}		
+						elseif($diff->format("%R%h")>4)
+						{
+							echo '<td>Last 4 Hours</td>';
+						}
+						elseif($diff->format("%R%h")>3)
+						{
+							echo '<td>Last 3 Hours</td>';
+						}
+						elseif($diff->format("%R%h")>2)
+						{
+							echo '<td>Last 2 Hours</td>';
+						}
+						elseif($diff->format("%R%h")>1)
+						{
+							echo '<td>Last Hour</td>';
+						}
+						elseif($diff->format("%R%i")>30)
+						{
+							echo '<td>Last 30 Minutes</td>';
+						}
+						elseif($diff->format("%R%i")>20)
+						{
+							echo '<td>Last 20 Minutes</td>';
+						}
+						elseif($diff->format("%R%i")>10)
+						{
+							echo '<td>Last 10 Minutes</td>';
+						}
+						elseif($diff->format("%R%i")>5)
+						{
+							echo '<td>Last 5 Minutes</td>';
+						}
+						elseif($diff->format("%R%i")>4)
+						{
+							echo '<td>Last 4 Minutes</td>';
+						}
+						elseif($diff->format("%R%i")>3)
+						{
+							echo '<td>Last 3 Minutes</td>';
+						}
+						elseif($diff->format("%R%i")>2)
+						{
+							echo '<td>Last 2 Minutes</td>';
+						}
+						elseif($diff->format("%R%i")>1)
+						{
+							echo '<td>Last Minute</td>';
+						}
 
-		  if($diff->format("%R%a")<0){
-          	echo '<td>Expired<td>';
-          	$row['productId']=-1;
-          }
-          else if($diff->format("%R%a")==0)
-          	echo '<td>Last Day<td>';
-          else
-          	echo '<td>'.$diff->format("%a").' days left<td>';
-          $_SESSION['timeleft']=$diff->format("%a");
-          echo "<td> <button type='submit' name='NewBid' value=".$row['productId'].">Bid</button></td>";
+		  			echo '<td>'.$row['Num_of_Extensions'].'</td>';
+
+		  			echo '<td>'.$row['Time_of_Extensions'].'</td>';
+
+		  			echo '<td>'.$row['crucial_time'].'</td>';
+
+							if($diff->format("%R%a")<0 || ($d1<$d2))
+							{
+
+								echo "<td> <button type='submit' name='NewBid' value=".$row['auctionId']." disabled>Bid</button></td>";
+							}
+							else {
+								{
+									echo "<td> <button type='submit' name='NewBid' value=".$row['auctionId']." >Bid</button></td>";
+									$auction = $row['auctionId'];
+									$_SESSION['auction'] = $auction;
+								}
+							}
+
           echo '</tr>';
         }
         echo '</table>';
@@ -132,4 +230,4 @@
         ?>
       </form>
  </body>
-</html>	
+</html>

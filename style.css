@@ -3,7 +3,9 @@
 }
 body{
   font-family:sans-serif;
-  background="pic5.jpg";
+  background-image: url("pic5.jpg");
+  height: 100%;
+
 }
 #login
 {
@@ -88,4 +90,7 @@ input {
   transform: rotateZ(0deg);
   transition: all 0.1s ease-out;
   border-bottom-width: 7px;
+}
+span {
+  background-color: powderblue;
 }

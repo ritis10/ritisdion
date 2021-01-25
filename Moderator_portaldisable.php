@@ -1,7 +1,7 @@
 <?php
 	session_start();
-    if($_SESSION["logged"]!="Moderator")
-    header("location: index.php");
+  if($_SESSION["logged"]!="0")
+  header("location: indexm.php");
 	$name=$_SESSION['Name'];
 	echo "<title> Welcome $name </title>";
     $db=mysqli_connect('localhost','root','','auction');
@@ -79,13 +79,14 @@
   </head>
  	<body>
  	 <ul>
-        	<li><a href="Moderator_portal.php">ActiveUsers</a></li>
-			    <li><a class="active"  href="Moderator_portaldisable.php">DisableUsers</a></li>
-        	<li><a href="index.php">Logout</a><li>
+		 <li><a href="Moderator_portal.php">ActiveUsers</a></li>
+		 <li><a class="active"  href="Moderator_portaldisable.php">DisableUsers</a></li>
+		 <li><a href="mod_Products.php">Auctions</a></li>
+		 <li><a href="index.php">Logout</a><li>
 	 </ul>
 
       <fieldset>
- 		<form name='Users' method="POST" action="disablememb.php" >
+ 		<form name='users' method="POST" action="disablememb.php" >
         <table>
         <tr>
           <th>UserName</th>
@@ -98,11 +99,12 @@
 		      <th>address</th>
           <th>email</th>
 					<th>Approval Date</th>
+					<th>Approval Pom</th>
 					<th>Status</th>
 
         </tr>
         <?php
-        $query="SELECT * FROM users;";
+        $query="SELECT * FROM users inner JOIN user_status on status=u_status_id;";
         mysqli_query($db,$query);
         $result=mysqli_query($db,$query);
         while($row=mysqli_fetch_array($result)){
@@ -117,7 +119,8 @@
           echo '<td>'.$row['address'].'</td>';
           echo '<td>'.$row['email'].'</td>';
 					echo '<td>'.$row['approval_date'].'</td>';
-					echo '<td>'.$row['status'].'</td>';
+					echo '<td>'.$row['approval_pom'].'</td>';
+					echo '<td>'.$row['u_status_descr'].'</td>';
           echo "<td> <button type='submit' name='Disable' value=".$row['id'].">Disable</button></td>";
           echo '</tr>';
         }

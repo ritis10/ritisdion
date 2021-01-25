@@ -1,105 +1,74 @@
-	<?php
-	session_start();
-	$name=$_SESSION['Name'];
-	$Err=0;
-	$idee=$_POST['submit'];
-	$db=mysqli_connect('localhost','root','','auction') or die('connection failed');
-	mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-	if ($idee==1)
+<?php
+session_start();
+$name=$_SESSION['Name'];
+$Err=0;
+$idee=$_POST['submit'];
+$db=mysqli_connect('localhost','root','','auction') or die('connection failed');
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+if ($idee==1)
+{
+$pname=$descp='';
+$extensions=$startbid=$extnum=$auctiontype=0;
+$Date = date("Y-m-d H:i:s", strtotime('+1 hour'));
+$descp=$_POST['desc'];
+if ($_POST['name']!="")
+	$pname=$_POST['name'];
+else{
+	echo "Παρακαλώ εισάγεται το όνομα του προϊόντος ή της υπηρεσίας<br>";
+	$Err++;
+}
+
+if (isset($_POST['extnum']))
+{
+	$extnum=$_POST['extnum'];
+}
+	else
 	{
-	$pname=$descp='';
-	$extensions=$minbid=$maxbid=$Qty=$Exp=$extnum=$dayext=0;
-	$descp=$_POST['desc'];
-	if ($_POST['name']!="")
-		$pname=$_POST['name'];
+		$extnum = null;
+	}
+
+if ($_POST['startbid']!=""){
+	if (is_numeric($_POST['startbid']))
+		$startbid=$_POST['startbid'];
 	else{
-		echo "Please Enter Product Name<br>";
+		echo "Εισάγεται αριθμό<br>";
 		$Err++;
 	}
-	if ($_POST['extnum']>0)
-			$extnum=$_POST['extnum'];
-		else{
-			$extnum = 0;
-		}
+}
+else{
+	echo "Παρακαλώ εισάγεται την τιμή εκκίνησης<br>";
+	$Err++;
+}
 
-		if ($_POST['dayext']>0)
-			$dayext=$_POST['dayext'];
-		else{
-			$dayext = 0;
-		}
+if (isset($_POST['extensions']))
+	{
+		$extensions = 1;
+	}
+	else
+	{
+		$extensions = 0;
+	}
 
-	if ($_POST['minbid']!=""){
-		if (is_numeric($_POST['minbid']))
-			$minbid=$_POST['minbid'];
-		else{
-			echo "Bid must be numeric<br>";
-			$Err++;
-		}
-	}
-	else{
-		echo "Please Enter Minimum Bid<br>";
-		$Err++;
-	}
-	if (isset($_POST['extensions']))
+	$answer = $_POST['auctiontype'];
+	if ($answer == "0")
 		{
-			$extensions = 1;
+			$auctiontype = 0;
 		}
 		else
 		{
-			$extensions = 0;
+			$auctiontype = 1;
 		}
 
-	$d1=date_create($_POST['expiry']);
-	$d2=date_create(date('d-m-Y'));
-	$diff=date_diff($d2,$d1);
-	if($diff->format("%R%a")<0){
-		echo "Enter Date in future<br>";
-		$Err++;
-	}
-	else{
-		$Exp=date_format($d1,'Y-m-d');
-	}
-
-	if ($_POST['maxbid']!=""){
-		if (is_numeric($_POST['maxbid'])){
-			if($_POST['maxbid']>$minbid)
-			$maxbid=$_POST['maxbid'];
-			else{
-				echo "Maximum Bid must be greater than Minimum Bid<br>";
-				$Err++;
-			}
-		}
-		else{
-			echo "Bid must be numeric<br>";
-			$Err++;
-		}
-	}
-	else{
-		echo "Please Enter Maximum Bid<br>";
-		$Err++;
-	}
-	if($_POST['qty']!=""){
-		$temp=(float)$_POST['qty']-(int)$_POST['qty'];
-		if (is_numeric($_POST['qty'])&&$temp==0){
-			$Qty=(int)$_POST['qty'];
-		}
-		else{
-			echo "Quantity must be an Integer<br>";
-			$Err++;
-		}
-	}
-	else{
-		echo "Please Enter Quantity<br>";
-		$Err++;
-	}
-	if($Err==0){
-		$max="SELECT MAX(productId) as \"lastId\" from product ";
-		$max=mysqli_query($db,$max) or die("query failed");
-		$max=mysqli_fetch_array($max);
-		$max=$max['lastId']+1;
-
-
-		$query="INSERT into product VALUES($max,'$pname',$maxbid,$minbid,$Qty,'$name','$descp','0','$Exp', '$extensions', '$extnum' ,'$dayext');";
+if($Err==0){
+	$max="SELECT MAX(auctionId) as \"lastId\" from product ";
+	$max=mysqli_query($db,$max) or die("query failed");
+	$max=mysqli_fetch_array($max);
+	$max=$max['lastId']+1;
+	$seller="SELECT id as sellerId from users where username='$name'";
+	$seller=mysqli_query($db,$seller) or die("query failed");
+	$seller=mysqli_fetch_array($seller);
+	$sellerId = $seller['sellerId'];
+	$query="INSERT into product VALUES('$max','$pname', '$startbid','$sellerId','$descp','0','10', '$Date', '$extensions' ,'$extnum', '15', '30', '$auctiontype', '0', '0');";
 		$result=mysqli_query($db,$query) or die("could not add");
 		if($result){
 			echo "<title> Successfully Added Product</title>";
@@ -116,79 +85,71 @@
 
 
 	if ($idee==4){
-		$Bid=$Quantity=0;
-		if ($_POST['Bid']!=""){
-			if($_SESSION['CB']!=NULL && $_SESSION['CB']>=$_POST['Bid']){
-				echo "Enter Bid Greater than Current Bid<br>";
-				$Err++;
-			}
-			else if($_SESSION['MinBid']>$_POST['Bid']){
-				echo "Enter Bid Greater than Minimum Bid<br>";
-				$Err++;
-			}
-			else{
-				$Bid=(float)$_POST['Bid'];
-			}
+		if (isset($_POST['bid']))
+		{
+			$Bid=$_POST['bid'];
 		}
-		else{
-			echo "Enter your bid amount<br>";
-			$Err++;
-		}
+			else
+			{
+				$Bid = null;
+			}
 
-		if($_POST['Qty']!="" && $_POST['Qty']>'0'){
-			if ((int)$_SESSION['Q']<(int)$_POST['Qty']){
-				echo "Please Enter Quantity Lesser than ".$_SESSION['Q']."<br>";
-				$Err++;
-			}
-			else{
-				$Quantity=(int)$_POST['Qty'];
-			}
-		}
-		else{
-			echo "Enter Valid Quantity<br>";
-			$Err++;
-		}
+		mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+		$whodoes = "SELECT id as whodoes from users where username='$name'";
+		$whodoes = mysqli_query($db,$whodoes) or die("query failed");
+		$whodoes = mysqli_fetch_array($whodoes);
+		$whodoesit = $whodoes['whodoes'];
 
-		if($_POST['addr']!="")
-			$address=$_POST['addr'];
-		else{
-			echo "Enter Address<br>";
-		}
-		if($Err==0){
-			$status=0;
-			if ($Bid>$_SESSION['MB']){
-				echo "<title> Order Confirmed! </title>";
-				echo "Congrats! You are the final Bidder<br>Order Confirmed<br>";
-				$status=1;
-			}
+		$address=$_POST['addr'];
+
+		$myDate = date("Y-m-d H:i:s", strtotime('+1 hour'));
+
 			$max="SELECT MAX(OrderId) as \"lastId\" from orders ";
 			$max=mysqli_query($db,$max) or die("query failed");
 			$max=mysqli_fetch_array($max);
 			$max=$max['lastId']+1;
+			$auction = $_SESSION['auction'];
 
-			$seller=$_SESSION['Seller'];
-			$Pid=$_SESSION['pid'];
-
-			$query="INSERT into orders VALUES($max,'$name','$seller',$Bid,'$address',$Pid,$Quantity,$status);";
+			$query="INSERT into orders VALUES('$max' , '$whodoesit' , '' , '$Bid' , '$address' , '$auction' , '0', '$myDate');";
 			$result=mysqli_query($db,$query) or die("could not add");
 
-			$updateQ="update product set quantity=quantity-$Quantity,currBid=$Bid where productId=$Pid;";
+			$expires="SELECT expiry as \"ex\" from product WHERE auctionId='$auction'";
+			$Mdate=mysqli_query($db,$expires) or die("query failed");
+			$Mdate=mysqli_fetch_array($Mdate);
+			$Mdate=date_create($Mdate['ex']);
+			$Mdate->modify('+5 hours');
+
+			$date = DateTime::createFromFormat('Y-m-d H:i:s', $myDate);
+
+			$diff=date_diff($date,$Mdate);
+
+			if($diff->format("%R%a")<0)
+			{
+				echo "Η περίοδος προσφορών έκλεισε";
+				echo "<form action='Listings.php'><button action='Listings.php'>Go Back</button></form>";
+			}
+			/*elseif($date<$Mdate)
+			{
+				echo "Η περίοδος προσφορών έκλεισε";
+				echo "<form action='Listings.php'><button action='Listings.php'>Go Back</button></form>";
+			}*/
+			else {
+
+			$updateQ="UPDATE product set currBid='$Bid' WHERE auctionId='$auction'";
 			$result2=mysqli_query($db,$updateQ) or die('Could not update');
 			if($result && $result2){
-				echo "<title> Successfully Added Product</title>";
-				if($status!=1){
-				echo "Successfully Added Product<br>";
-				echo "Please Comeback later to check Status";
-				}
+				echo "<title> Successfully</title>";
+				echo "Η προσφορά σου έγινε";
+				echo "<form action='Listings.php'><button action='Listings.php'>Go Back</button></form>";
 			}
 		}
+	}
 
 		else{
 			echo "<title> Failed to Bid</title>";
 			echo "Failed to Bid . Try Again";
+			echo "<form action='Listings.php'><button action='Listings.php'>Go Back</button></form>";
 		}
-		echo "<form action='Listings.php'><button action='Listings.php'>Go Back</button></form>";
-	}
 
 	if($idee==5){
 		$PID=$_SESSION['Product_to_delete'];
@@ -219,7 +180,7 @@
 				$amt=$row['amount'];
 			}
 
-			$query="UPDATE orders set status=1 where OrderId=$OID";
+			$query="UPDATE orders set status_del=1 where OrderId=$OID";
 			$result=mysqli_query($db,$query) or die('Could not sell');
 
 			$query="UPDATE product set minbid=maxbid, maxbid=maxbid+$amt, currBid=0 where productId=$PID;";
@@ -236,12 +197,15 @@
 		//$PID=$_SESSION["user_to_active"];
 		$Stat=$_SESSION["user_status"];
 		$OID=$_SESSION["user_to_active"];
-		if ($Stat=='active'){
+		if ($Stat=='3'){
 			echo "Member is already activated<br>";
 			echo "<title> Please Try Again !</title>";
 		}
+		else if($Stat=='2'){
+			echo "Η επαναφορά από οριστική απενεργοποίηση γίνεται μόνο από τον PROVIDER!!!";
+		}
 		else {
-			$query="UPDATE users set status='active' where id=$OID";
+			$query="UPDATE users set status='3' where id=$OID";
 			$result=mysqli_query($db,$query) or die('Could not change');
 			$query1="UPDATE users set approval_date=curdate() where id=$OID";
 			$result1=mysqli_query($db,$query1) or die('λαθος ημερομηνία');
@@ -257,12 +221,12 @@
 		//$PID=$_SESSION["user_to_active"];
 		$Stat=$_SESSION["user_status"];
 		$OID=$_SESSION["user_to_disable"];
-		if ($Stat=='temporarily disable'){
+		if ($Stat=='1'){
 			echo "Member is already disabled<br>";
 			echo "<title> Please Try Again !</title>";
 		}
 		else {
-			$query="UPDATE users set status='temporarily disabled' where id=$OID";
+			$query="UPDATE users set status='1' where id=$OID";
 			$result=mysqli_query($db,$query) or die('Could not change');
 			$query1="UPDATE users set approval_date=curdate() where id=$OID";
 			$result1=mysqli_query($db,$query1) or die('λαθος ημερομηνία');
@@ -278,12 +242,12 @@
 		//$PID=$_SESSION["user_to_active"];
 		$Stat=$_SESSION["user_status"];
 		$OID=$_SESSION["user_to_disable"];
-		if ($Stat=='finally disable'){
+		if ($Stat=='2'){
 			echo "Member is already finally disabled<br>";
 			echo "<title> Please Try Again !</title>";
 		}
 		else {
-			$query="UPDATE users set status='finally disabled' where id=$OID";
+			$query="UPDATE users set status='2' where id=$OID";
 			$result=mysqli_query($db,$query) or die('Could not change');
 			$query1="UPDATE users set approval_date=curdate() where id=$OID";
 			$result1=mysqli_query($db,$query1) or die('λαθος ημερομηνία');
@@ -295,4 +259,79 @@
 				echo "<form action='Moderator_portal.php'><button action='Moderator_portal.php'>Go Back</button></form>";
 
 	}
-	?>
+	if ($idee==10){
+		//$PID=$_SESSION["user_to_active"];
+		$Stat=$_SESSION["user_status"];
+		$OID=$_SESSION["user_to_active"];
+		if ($Stat=='3'){
+			echo "Member is already activated<br>";
+			echo "<title> Please Try Again !</title>";
+		}
+		else {
+			$query="UPDATE users set status='3' where id=$OID";
+			$result=mysqli_query($db,$query) or die('Could not change');
+			$query1="UPDATE users set approval_date=curdate() where id=$OID";
+			$result1=mysqli_query($db,$query1) or die('λαθος ημερομηνία');
+		  if($result){
+				echo "<title> Success !</title>";
+				echo "Ο λογαριασμός χρήστη με κωδικό : $OID ενεργοποιήθηκε επιτυχώς";
+		  }
+		}
+				echo "<form action='svp.php'><button action='svp.php'>Go Back</button></form>";
+	}
+
+	if ($idee==11){
+		//$PID=$_SESSION["user_to_active"];
+		$Stat=$_SESSION["user_status"];
+		$OID=$_SESSION["user_to_disable"];
+		if ($Stat=='1'){
+			echo "Member is already disabled<br>";
+			echo "<title> Please Try Again !</title>";
+		}
+		else {
+			$query="UPDATE users set status='1' where id=$OID";
+			$result=mysqli_query($db,$query) or die('Could not change');
+			$query1="UPDATE users set approval_date=curdate() where id=$OID";
+			$result1=mysqli_query($db,$query1) or die('λαθος ημερομηνία');
+		  if($result){
+				echo "<title> Success !</title>";
+				echo "Ο λογαριασμός χρήστη με κωδικό : $OID απεργοποιήθηκε προσωρινά";
+		  }
+		}
+				echo "<form action='svp.php'><button action='svp.php'>Go Back</button></form>";
+
+	}
+	if ($idee==12){
+		//$PID=$_SESSION["user_to_active"];
+		$Stat=$_SESSION["user_status"];
+		$OID=$_SESSION["user_to_disable"];
+		if ($Stat=='2'){
+			echo "Member is already finally disabled<br>";
+			echo "<title> Please Try Again !</title>";
+		}
+		else {
+			$query="UPDATE users set status='2' where id=$OID";
+			$result=mysqli_query($db,$query) or die('Could not change');
+			$query1="UPDATE users set approval_date=curdate() where id=$OID";
+			$result1=mysqli_query($db,$query1) or die('λαθος ημερομηνία');
+		  if($result){
+				echo "<title> Success !</title>";
+				echo "Ο λογαριασμός χρήστη με κωδικό : $OID απενεργοποιήθηκε οριστικά";
+		  }
+		}
+				echo "<form action='svp.php'><button action='svp.php'>Go Back</button></form>";
+
+	}
+	if($idee==13){
+		$PID=$_SESSION['Auction_to_delete'];
+		$query="DELETE from orders where productId=$PID;";
+		$result2=mysqli_query($db,$query) or die("Delete Failed");
+		$query="DELETE from product where auctionId=$PID;";
+		$result=mysqli_query($db,$query) or die("Delete Failed");
+		if($result && $result2){
+			echo "<title> H Δημοπρασία ακυρώθηκε!</title>";
+			echo "H Δημοπρασία με κωδικο :$PID ακυρώθηκε!";
+		}
+			echo "<form action='svp.php'><button action='svp.php'>Go Back</button></form>";
+	}
+  ?>

@@ -3,10 +3,13 @@
     if($_SESSION["logged"]!="buyer")
     header("location: index.php");
 	$name=$_SESSION['Name'];
+	$auction = $_SESSION['auction'];
 	echo "<title> Complete Your Order, $name </title>";
 	$db=mysqli_connect('localhost','root','','auction') or die("connection failed");
   $pId=$_POST['NewBid'];
-  $time=$_SESSION['timeleft'];
+	$expire=0;
+
+  //$time=$_SESSION['when_'];
 ?>
 <html>
   <head>
@@ -48,7 +51,7 @@
     	width: 100%;
 	  }
 
-	li{	
+	li{
     	float: left;
 	}
 
@@ -76,54 +79,58 @@
         <li><a href="index.php">Logout</a></li>
 		</ul>
       <?php
-        if($pId==-1){
-          echo "Product Expired";
-          echo "<form action='Listings.php'><button action='Listings.php'>Go Back</button></form>";
-        }
+			mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+			$query="SELECT finished as \"expired\" FROM product";
+			$expire=mysqli_query($db,$query) or die("query failed");
+			$expire=mysqli_fetch_array($expire);
+			//$expire=$expire['expire'];
+			if ($expire == false)
+			{
+				echo '<td>Ο Χρόνος κατάθεσης προσφορών ΕΛΗΞΕ</td>';
+				echo "<form action='Listings.php'><button action='Listings.php'>Go Back</button></form>";
+			}
         else{
           ?>
   	<form method="get" action="newOrder.php">
       <table>
         <tr>
-          <th>Product Name</th>
-          <th>Minimum Bid</th>
-          <th>Current Bid</th>
-          <th>Description</th>
-          <th>Stock</th>
-          <th>Seller</th>
+          <th>Όνομα Προϊόντος</th>
+          <th>Τιμή εκκίνησης</th>
+          <th>Τιμή Τελευταίου Χτυπήματος</th>
+					<th>Βήμα Χτυπημάτων</th>
+          <th>Περιγραφή</th>
+          <th>Πωλητής</th>
+          <th>Τύπος Δημοπρασίας</th>
         </tr>
         <?php
 
-        $query="SELECT * FROM product where productId=$pId;";
+        $query="SELECT * FROM product where auctionId=$pId;";
         mysqli_query($db,$query);
         $result=mysqli_query($db,$query);
-        while($row=mysqli_fetch_array($result)){
+        while($row=mysqli_fetch_array($result))
+				{
           echo '<tr>';
           echo '<td>'.$row['productName'].'</td>';
+
           echo '<td>'.$row['minbid'].'</td>';
 
           if($row['currBid']==0)
-          	echo '<td>NEW</td>';
+          	echo '<td>'.$row['minbid'].'</td>';
           else
-          	echo '<td>'.$row['currBid'].'</td>';
+          echo '<td>'.$row['currBid'].'</td>';
+					$price=$row['currBid']+10;
 
-          $_SESSION['CB']=$row['currBid'];
-          $_SESSION['MB']=$row['maxbid'];
-          $_SESSION['MinBid']=$row['minbid'];
-          $_SESSION['Q']=$row['quantity'];
+					echo '<td>'.$row['price_step'].'</td>';
 
           echo '<td>'.$row['descp'].'</td>';
 
-          if($row['quantity']>5)
-          	echo '<td>Available</td>';
-          else if($row['quantity']>0)
-          	echo '<td>Few Left</td>';
-          else
-          	echo '<td>Out of Stock</td>';
+					echo '<td>'.$row['owner'].'</td>';
 
-          echo '<td>'.$row['sellerUsr'].'</td>';
-          $_SESSION['Seller']=$row['sellerUsr'];
-          $_SESSION['pid']=$row['productId'];
+					if($row['type']==0)
+          	echo '<td>ΠΛΕΙΟΔΟΤΙΚΗ</td>';
+          else
+          	echo '<td>ΜΕΙΟΔΟΤΙΚΗ</td>';
+
          }
           echo '</table>';
           echo "<br>";
@@ -133,16 +140,26 @@
         ?>
       </form>
       <form method="POST" action="landing_page.php">
-        Enter your Bid  <input type="text" name="Bid" value=""><br>
-        Enter Quantity <input type="text" name="Qty" value=""><br><br>
-        Enter Address <textarea rows='4' columns='10' name='addr' value=""></textarea><br>
-        Payment Method <input type='radio' checked>Cash On Delivery
+				<p>Εισάγεται την Προσφορά σας: <input type="number" min="<?php echo $price ?>" step="10" name="bid" id="bid" value="0"><br></p>
+        Εισάγεται την Διευθυνση σας: <input type="text" name='addr' value=""><br>
 
-        <button type='submit' name='submit' value='4'>Place Bid</button>
+        <p><button type='submit' name='submit' value='4'>Place Bid</button></p>
       </form>
+
       <?php
-        //if($_SESSION)
-      }
+        /*$query="SELECT finished as \"expire\" FROM product";
+				$expire=mysqli_query($db,$expire) or die("query failed");
+				$expire=mysqli_fetch_array($expire);
+				$expire=$expire['expire'];
+				if ($expire == 0)
+				{
+					echo '<td>Ο Χρόνος κατάθεσης προσφορών ΕΛΗΞΕ</td>';
+				}*/
+
+}
       ?>
+
+
+
  </body>
-</html>	
+</html>

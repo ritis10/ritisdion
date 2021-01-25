@@ -39,7 +39,7 @@ li{
 <ul>
     <li><a href="guest.php">Προϊόντα</a></li>
     <li><a class="active" href="contactus.php">Επικοινωνία</a></li>
-    <li><a href="register.php">Register </a></li>
+    <li><a href="registration.php">Register </a></li>
     <li><a href="index.php">Επιστροφή στο αρχικό μενού</a><li>
 </ul>
 <h2><pre>

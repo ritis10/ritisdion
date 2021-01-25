@@ -1,9 +1,10 @@
 <?php
 	session_start();
+	$db=mysqli_connect('localhost','root','','auction') or die('connection failed');
     if($_SESSION["logged"]!="seller")
     header("location: index.php");
 	$name=$_SESSION['Name'];
-	echo "<title> Welcome $name </title>";
+	echo "<title> Welcome $name</title>";
 ?>
 <html>
   <head>
@@ -23,12 +24,38 @@
       tr,td,th{
         border-style:solid;
       }
-      input, button, textarea{
+      input,  textarea{
         background: #2196F3;
         border-width: 1px;
         color: #fff;
         border-radius:5px;
       }
+			button
+			{
+				background-color: #f44336;
+			  border: none;
+			  color: white;
+			  padding: 16px 32px;
+			  text-align: center;
+			  text-decoration: none;
+			  display: inline-block;
+			  font-size: 16px;
+			  margin: 4px 2px;
+			  transition-duration: 0.4s;
+			  cursor: pointer;
+				position:absolute;
+				top: 30%;
+				left: 9%;
+			}
+			.button1 {
+  		background-color: white;
+  		color: black;
+  		border: 2px solid #f44336;
+			}
+			.button1:hover {
+  		background-color: #f44336;
+  		color: white;
+			}
       ul{
       list-style-type: none;
       margin: 0;
@@ -64,7 +91,36 @@
       width: 260px;
       float:left;
       text-align: left;
-    }
+		}
+
+		fieldset {
+		margin-inline-start: 0;
+		margin-inline-end: 0;
+		padding-block-start: 0;
+		padding-block-end: 0;
+		padding-inline-start: 0;
+		padding-inline-end: 0;
+		border: none;
+		min-inline-size: min-content;
+		    }
+
+		    .some-class {
+		      float: left;
+		      clear: none;
+		    }
+
+		    label {
+		      float: left;
+		      clear: none;
+		      display: block;
+		      padding: 0px 1em 0px 8px;
+		    }
+
+		    input[type=radio],
+		    input.radio {
+		      float: left;
+		      clear: none;
+		    }
      </style>
   </head>
  	<body>
@@ -76,14 +132,19 @@
 		</ul>
 
  			<form name='add_product' method="POST" action="landing_page.php" >
- 				<label>Enter the Name of your Product </label> <input type="text" name="name" value=""><br>
- 				<label>Enter the Minimum Bid</label> <input type="text" name="minbid" value=""><br>
- 				<label>Enter the Maximum Bid </label><input type="text" name="maxbid" value=""><br>
- 				<label>Enter the Quantity Available</label> <input type="text" name="qty" value=""><br><br>
- 				<label>Enter Item Description</label> <textarea rows='4' columns='10' name='desc' value=""></textarea><br>
- 				<label>Enter the Expiry </label><input type="date" name="expiry" value=""></br>
-				<input type="checkbox" name="extensions" value=0 id="myCheck" onchange="myfunction(this);">
-	  			<label for="extensions">Allow Extensions?</label><br>
+ 				<label>Όνομα του προϊόντος ή υπηρεσίας:</label> <input type="text" name="name" value=""><br>
+ 				<label>Αρχική Τιμή:</label> <input type="text" name="startbid" value=""><br>
+ 				<label>Περιγραφή του προϊόντος ή της υπρεσίας:</label> <textarea rows='4' columns='10' name='desc' value=""></textarea><br>
+				<label>Τύπος Δημοπρασίας:</label>
+				<fieldset>
+				<div><input type="radio" class="radio" name="auctiontype" value="0" required>
+				<label for="auctiontype0">Πλειοδοτική</label><br>
+				<div><input type="radio" class="radio" name="auctiontype" value="1">
+				<label for="auctiontype1">Μειοδοτική</label><br></div>
+				</fieldset>
+				<input type="checkbox" name="extensions" value="0" id="myCheck" onchange="myfunction(this);">
+	  		<label for="extensions">Επιτρέπονται οι παρατάσεις?</label><br>
+
 					<script>
 					document.getElementById("myCheck").onclick = function()
 					{
@@ -96,14 +157,11 @@
 						{
 							document.getElementById("extnum").disabled = true;
 							document.getElementById("extnum").value = 0;
-							document.getElementById("dayext").disabled = true;
-							document.getElementById("dayext").value = 0;
 						}
 					}
 					</script>
-					<label>Enter the Number of Extensions</label> <input type="number" name="extnum" id="extnum" value="" disabled><br>
-					<label>Enter the Time of Extensions (days)</label> <input type="number" name="dayext" id="dayext" value="" disabled><br>
-	 				<button type="submit" name="submit" value=1> Add Product </button>
+					<label>Αριθμός Παρατάσεων:</label> <input type="number" min="1" name="extnum" id="extnum" value="0" disabled><br> <label>*Οι Παρατάσεις είναι των 5 λεπτών!</label>
+	 				<button class="button button1" type="submit" name="submit" value=1>Έναρξη Δημoπρασίας</button>
 	 			</form>
 	  	</body>
 	</html>

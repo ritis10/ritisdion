@@ -1,6 +1,7 @@
 <?php
 	session_start();
-    if($_SESSION["logged"]!='0')
+		if($_SESSION["logged"]!="1")
+		//if($_SESSION["logged"]!="Moderator")
     header("location: indexm.php");
 	$name=$_SESSION['Name'];
 	echo "<title> Welcome $name </title>";
@@ -24,7 +25,7 @@
       tr,td,th{
         border-style:solid;
       }
-      input, button{
+      input{
         background: #2196F3;
         border: none;
         left: 0;
@@ -35,6 +36,17 @@
         transform: rotateZ(0deg);
         transition: all 0.1s ease-out;
       }
+			button{
+				background: #FF0006;
+				border: none;
+				left: 0;
+				color: black;
+				bottom: 0;
+				border: 0px solid rgba(0, 0, 0, 0.1);
+				border-radius:5px;
+				transform: rotateZ(0deg);
+				transition: all 0.1s ease-out;
+			}
       ul{
     	list-style-type: none;
    	 	margin: 0;
@@ -64,19 +76,20 @@
  .active {
 	background-color: #4CAF50;
 }
-
   </style>
   </head>
  	<body>
  	 <ul>
-        	<li><a class="active"  href="Moderator_portal.php">ActiveUsers</a></li>
-			    <li><a href="Moderator_portaldisable.php">DisableUsers</a></li>
-					<li><a href="mod_Products.php">Auctions</a></li>
-        	<li><a href="index.php">Logout</a><li>
+		 <li><a href="svp.php">ActiveUsers</a></li>
+		 <li><a class="active" href="svp_portaldisable.php">DisableUsers</a></li>
+		 <li><a href="svp_Seller_portal.php">Knockdown</a></li>
+		 <li><a href="svp_Seller_orders.php">Orders</a></li>
+		 <li><a href="svp_Products.php">Products</a></li>
+		 <li><a href="index.php">Logout</a><li>
 	 </ul>
 
       <fieldset>
- 		  <form name='Users' method="POST" action="activememb.php" >
+ 		<form name='Users' method="POST" action="disablemembsvp.php" >
         <table>
         <tr>
           <th>UserName</th>
@@ -111,7 +124,7 @@
 					echo '<td>'.$row['approval_date'].'</td>';
 					echo '<td>'.$row['approval_pom'].'</td>';
 					echo '<td>'.$row['u_status_descr'].'</td>';
-					echo "<td> <button type='submit' name='Activate' value=".$row['id'].">Activate</button></td>";
+          echo "<td> <button type='submit' name='Disable' value=".$row['id'].">Disable</button></td>";
           echo '</tr>';
         }
         echo '</table>';
